@@ -17,8 +17,7 @@ void main() {
 
   group('User repository - ', () {
     group('getUser() - ', () {
-      test('Should response responseCode - 200 and user data with json',
-          () async {
+      test('Test for responseCode is 200 and user data with json', () async {
         // Arrange
         // Act
         when(() => mockApiClient.get(
@@ -37,6 +36,21 @@ void main() {
         final user = await userRepository.getUser();
         expect(user, isA<User>());
       });
+
+      test(
+        'Test for responseCode is not 200 and error exception',
+        () async {
+          // Arrange
+          // Act
+          when(() => mockApiClient.get(
+                Uri.parse('https://jsonplaceholder.typicode.com/users/1'),
+              )).thenAnswer((value) async {
+            return Response('{}', 500);
+          });
+          final user = userRepository.getUser();
+          expect(user, throwsException);
+        },
+      );
     });
   });
 }
